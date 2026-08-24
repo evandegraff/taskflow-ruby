@@ -1,0 +1,139 @@
+:root {
+  --bg: #f7f7f5;
+  --card: #ffffff;
+  --border: #e2e2df;
+  --text: #1f2321;
+  --muted: #6b7069;
+  --accent: #2f6b4f;
+  --accent-hover: #244f3a;
+  --danger: #b3432b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 48px 20px 80px;
+}
+
+.app__header h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.app__subtitle {
+  margin: 4px 0 32px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.task-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.task-form input {
+  flex: 1 1 160px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.task-form button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.task-form button:hover {
+  background: var(--accent-hover);
+}
+
+.task-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.task--completed .task__title {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.task__checkbox {
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.task__body {
+  flex: 1;
+}
+
+.task__title {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.task__description {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.task__delete {
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 4px 6px;
+}
+
+.task__delete:hover {
+  text-decoration: underline;
+}
+
+.empty-state {
+  color: var(--muted);
+  font-size: 14px;
+  padding: 16px 0;
+}
+
+.error-banner {
+  background: #fbe4de;
+  color: var(--danger);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 16px;
+}

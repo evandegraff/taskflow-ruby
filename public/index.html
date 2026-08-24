@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="app__header">
+      <h1>TaskFlow</h1>
+      <p class="app__subtitle">A small Ruby API + vanilla JS task manager</p>
+    </header>
+
+    <form id="task-form" class="task-form">
+      <input
+        type="text"
+        id="task-title"
+        placeholder="What needs doing?"
+        required
+        autocomplete="off"
+      />
+      <input
+        type="text"
+        id="task-description"
+        placeholder="Details (optional)"
+        autocomplete="off"
+      />
+      <button type="submit">Add Task</button>
+    </form>
+
+    <p id="error-banner" class="error-banner" hidden></p>
+
+    <ul id="task-list" class="task-list" aria-live="polite"></ul>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
