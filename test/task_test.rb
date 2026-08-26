@@ -26,4 +26,31 @@ class TaskTest < Minitest::Test
     assert_equal "Original", task.title
     assert task.completed
   end
+
+  def test_defaults_to_medium_priority
+    task = Task.new(id: 1, title: "No priority given")
+    assert_equal "medium", task.priority
+  end
+
+  def test_accepts_a_valid_priority
+    task = Task.new(id: 1, title: "Urgent thing", priority: "high")
+    assert_equal "high", task.priority
+  end
+
+  def test_raises_on_invalid_priority
+    assert_raises(ArgumentError) { Task.new(id: 1, title: "Bad priority", priority: "urgent") }
+  end
+
+  def test_update_changes_priority
+    task = Task.new(id: 1, title: "Original", priority: "low")
+    task.update(priority: "high")
+
+    assert_equal "high", task.priority
+  end
+
+  def test_update_rejects_invalid_priority
+    task = Task.new(id: 1, title: "Original", priority: "low")
+
+    assert_raises(ArgumentError) { task.update(priority: "urgent") }
+  end
 end
