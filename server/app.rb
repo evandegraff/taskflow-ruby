@@ -5,6 +5,7 @@ require "json"
 require_relative "task_store"
 require_relative "task_query"
 require_relative "paginator"
+require_relative "request_logger"
 
 # WEBrick's ProcHandler only wires up do_GET/do_POST/do_PUT out of the box.
 # We route DELETE and PATCH through the same handler so our REST routes work.
@@ -57,7 +58,8 @@ class TaskFlowServer
   end
 
   def mount_routes
-    @server.mount_proc("/api/tasks") { |req, res| route(req, res) }
+    logged_router = RequestLogger.new(method(:route))
+    @server.mount_proc("/api/tasks") { |req, res| logged_router.call(req, res) }
   end
 
   # WEBrick's mount_proc does prefix matching, so a single mount handles
