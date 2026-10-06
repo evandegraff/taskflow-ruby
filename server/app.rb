@@ -3,6 +3,7 @@
 require "webrick"
 require "json"
 require_relative "task_store"
+require_relative "task_query"
 
 # WEBrick's ProcHandler only wires up do_GET/do_POST/do_PUT out of the box.
 # We route DELETE and PATCH through the same handler so our REST routes work.
@@ -20,7 +21,8 @@ end
 # This keeps the project runnable anywhere with just a Ruby install.
 #
 # Endpoints:
-#   GET    /api/tasks        -> list all tasks
+#   GET    /api/tasks        -> list tasks (supports filtering + sorting,
+#                                see TaskQuery for query params)
 #   POST   /api/tasks        -> create a task
 #   GET    /api/tasks/:id    -> fetch a single task
 #   PUT    /api/tasks/:id    -> update a task
@@ -72,7 +74,8 @@ class TaskFlowServer
   def handle_collection(req, res)
     case req.request_method
     when "GET"
-      json_response(res, 200, @store.all.map(&:to_h))
+      tasks = TaskQuery.new(req.query).apply(@store.all)
+      json_response(res, 200, tasks.map(&:to_h))
     when "POST"
       body = parse_json_body(req)
       task = @store.create(
@@ -111,6 +114,8 @@ class TaskFlowServer
     else
       method_not_allowed(res)
     end
+  rescue ArgumentError => e
+    json_response(res, 422, { error: e.message })
   end
 
   def parse_json_body(req)
