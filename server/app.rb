@@ -4,6 +4,7 @@ require "webrick"
 require "json"
 require_relative "task_store"
 require_relative "task_query"
+require_relative "paginator"
 
 # WEBrick's ProcHandler only wires up do_GET/do_POST/do_PUT out of the box.
 # We route DELETE and PATCH through the same handler so our REST routes work.
@@ -22,7 +23,8 @@ end
 #
 # Endpoints:
 #   GET    /api/tasks        -> list tasks (supports filtering + sorting,
-#                                see TaskQuery for query params)
+#                                see TaskQuery for query params;
+#                                optional ?page=&per_page= pagination)
 #   POST   /api/tasks        -> create a task
 #   GET    /api/tasks/:id    -> fetch a single task
 #   PUT    /api/tasks/:id    -> update a task
@@ -75,7 +77,9 @@ class TaskFlowServer
     case req.request_method
     when "GET"
       tasks = TaskQuery.new(req.query).apply(@store.all)
-      json_response(res, 200, tasks.map(&:to_h))
+      paginator = Paginator.new(req.query)
+      set_pagination_headers(res, paginator.metadata(tasks.size))
+      json_response(res, 200, paginator.apply(tasks).map(&:to_h))
     when "POST"
       body = parse_json_body(req)
       task = @store.create(
@@ -116,6 +120,16 @@ class TaskFlowServer
     end
   rescue ArgumentError => e
     json_response(res, 422, { error: e.message })
+  end
+
+  # Page info goes in headers so the response body stays a plain array.
+  def set_pagination_headers(res, meta)
+    res["X-Total-Count"] = meta[:total].to_s
+    return unless meta[:page]
+
+    res["X-Page"] = meta[:page].to_s
+    res["X-Per-Page"] = meta[:per_page].to_s
+    res["X-Total-Pages"] = meta[:total_pages].to_s
   end
 
   def parse_json_body(req)
